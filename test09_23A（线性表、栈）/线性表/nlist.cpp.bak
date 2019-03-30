@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include "nlist.h"
+
+//初始化//NList list;  InitList(&list);
+void InitList(NList *pplist)
+{
+	assert(pplist != NULL);
+	*pplist = NULL;
+}
+//头插，违背生活规律，尽量少用
+bool Insert_head(NList *pplist,int val)//pplist是存储首元节点地址的地址
+{
+	Node *p = (Node *)malloc(sizeof(Node));
+	p->data = val;
+
+	p->next = (*pplist);//*pplist代表首元节点的地址
+	*pplist = p;
+
+	return true;
+}
+//尾插
+bool Insert_tail(NList *pplist,int val)
+{
+	Node *q = (Node *)malloc(sizeof(Node));
+	q->data = val;
+	q->next = NULL;
+	if (*pplist == NULL)
+	{
+		*pplist = q;
+		return true;
+	}
+	Node *p;
+	for(p = *pplist; p->next != NULL; p = p->next);
+	p->next = q;
+
+	return true;
+}
+//查找
+Node* Search(NList plist,int key)
+{
+	Node *p = plist;
+	for(; p != NULL; p = p->next)
+	{
+		if(p->data == key)
+		{
+			return p;
+		}
+	}
+	return NULL;
+}
+//删除
+bool Delete(NList *pplist,int key)
+{
+	Node *p = Search(*pplist, key);
+	if(p != NULL)
+	{
+		Node *q = p->next;
+		int tmp = p->data;
+		p->data = q->data;
+		q->data = tmp;  
+
+		p->next = q->next;
+		free(q);
+		return true;
+	}
+	return false;
+}
+//求长
+int GetLength(NList plist)
+{
+	int count = 0;
+	for(Node *p = plist; p != NULL; p = p->next)
+	{
+		++count;
+	}
+	return count;
+}
+//判空
+bool IsEmpty(NList plist)
+{
+	return plist == NULL;
+}
+//清空数据
+void Clear(NList *pplist)
+{
+	Destroy(pplist);
+}
+//销毁顺序表
+void Destroy(NList *pplist)
+{
+	while(*pplist != NULL)
+	{
+		Node *p = *pplist;
+		*pplist = p->next;
+		free(p);
+	}
+}
+//打印
+void Show(NList plist)
+{
+	Node *p = plist;
+	for(; p != NULL; p = p->next)
+	{
+		printf("%d  ", p->data);	
+	}
+	printf("\n");
+}
+//逆置
+void Reverse(NList *pplist)
+{
+	if(pplist==NULL || *pplist==NULL || (*pplist)->next==NULL)
+	{
+		return ;
+	}
+	Node *p = *pplist;
+	*pplist = NULL;
+
+	while(p != NULL)
+	{
+		Node *q = p->next;
+		p->next = *pplist;
+		*pplist = p;
+		p = q;
+	}
+}
